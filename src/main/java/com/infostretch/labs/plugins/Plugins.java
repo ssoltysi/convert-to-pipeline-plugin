@@ -146,6 +146,10 @@ public abstract class Plugins {
         transformer.publishSteps.append(string);
     }
 
+    protected final void appendNotificationSteps(String step) {
+	transformer.notificationSteps.append(step);
+    }
+
     /**
      * Returns Class that matches nodeName.
      * The method checks if any node nodeNames need to be ignored.

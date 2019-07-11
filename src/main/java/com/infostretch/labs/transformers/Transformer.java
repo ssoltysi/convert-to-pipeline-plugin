@@ -58,6 +58,7 @@ public class Transformer {
     protected NodeList buildersList;
     public boolean firstJob = true;
     public StringBuffer script, buildSteps, publishSteps;
+    public StringBuffer notificationSteps = new StringBuffer();
     public String currentJobName = "", previousUrl = "", previousLabel = "";
     private Map<String, Object> requestParams;
     private List<String> copyConfigs = new ArrayList<>(Arrays.asList("description", "properties", "triggers"));
@@ -99,6 +100,7 @@ public class Transformer {
         appendToScript("timestamps {\n");
     }
     private void finalizeConversion(boolean commitJenkinsfile, String commitMessage) {
+        appendToScript("\n} finally {\n" + notificationSteps.toString() + "\n}");
         appendToScript("\n}\n}");
         appendScriptToXML(commitJenkinsfile, commitMessage);
         writeConfiguration();
@@ -220,6 +222,7 @@ public class Transformer {
             label = doc.getElementsByTagName("assignedNode").item(0).getTextContent();
             if(firstJob) {
                 appendToScript("\nnode ('" + label + "') { \n");
+		appendToScript("\n\ttry { \n");
             } else {
                 if(!label.equalsIgnoreCase(previousLabel)) {
                     appendToScript("\n}\nnode ('" + label + "') { \n");

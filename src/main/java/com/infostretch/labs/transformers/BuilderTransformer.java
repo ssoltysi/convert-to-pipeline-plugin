@@ -58,7 +58,10 @@ public class BuilderTransformer {
             }
             transformer.jdk = (Element) transformer.doc.getElementsByTagName("jdk").item(0);
             if (transformer.jdk != null && !transformer.jdk.getTextContent().equals("(System)")) {
-                transformer.buildSteps.append("\nwithEnv([\"JAVA_HOME=${ tool '\"+JDK+\"' }\", \"PATH=${env.JAVA_HOME}/bin\"]) { \n");
+		String jdkVersion = transformer.jdk.getTextContent();
+		String withEnvString = "\nwithEnv([\"JAVA_HOME=${ tool \'%s\'}\", \"PATH=${env.JAVA_HOME}/bin:${env.PATH}\"]) { \n";
+		withEnvString = String.format(withEnvString, jdkVersion);
+		transformer.buildSteps.append(withEnvString);
             }
             Element buildWrappers = (Element) transformer.doc.getElementsByTagName("buildWrappers").item(0);
             if (buildWrappers != null) {
